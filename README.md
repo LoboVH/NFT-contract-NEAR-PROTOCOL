@@ -7,8 +7,7 @@
 
 ### Clone this Repo
 Use `git clone https://github.com/LoboVH/NFT-contract-NEAR-PROTOCOL.git` to get the file in this in your localmachine.  
-`cd NFT-contract-NEAR-PROTOCOL`+9
-333333333
+`cd NFT-contract-NEAR-PROTOCOL`
 
 
 
@@ -65,6 +64,22 @@ If you run the following command, it will transfer the token "token-1" to the ac
 ```near
     near call $NFT_CONTRACT_ID nft_transfer '{"receiver_id": "NEW ACCOUNT NAME", "token_id": "token-1", "memo": "ADD YOUR MEMO"}' --accountId $NFT_CONTRACT_ID --depositYocto 1
 ```
+### Royalties
+To mint a token with perpetual royalties, Run:
+```near
+    near call $NFT_CONTRACT_ID nft_mint '{"token_id": "royalty-token", "metadata": {"title": "ADD TITLE", "description": "ADD DESCRIPTION", "media": "ADD MEDIA LINK"}, "receiver_id": "'$NFT_CONTRACT_ID'", "perpetual_royalties": {"ROYALTY ACCOUNT NAME": ROYALTY_POINTS, "ROYALTY ACCOUNT NAME": ROYALTY_POINTS,
+"ROYALTY ACCOUNT NAME": ROYALTY_POINTS}}' --accountId $NFT_CONTRACT_ID --amount 0.1
+```
+Update `token_id` and `metadata` field accordingly,
+Replace `"ROYALTY ACCOUNT NAME"` with suitable Royalty account name also replace the `ROYALTY_POINTS` with the royalty percntage for the respective account.  
+Minimum percentage you can give out is 0.01%, or 1 i.e. 10000 ROYALTY_POINTS is 100%.
+
+To calculate NFT Payout for given balance:
+```near
+    near view $NFT_CONTRACT_ID nft_payout '{"token_id": "royalty-token", "balance": "BALANCE_IN_YOCTO-NEAR", "max_len_payout": 100}'
+```
+Note that `balance` is in yoctoNEAR.
+
 ### Approve account
 #### Create a sub account
 Run the following command to create a sub-account approval of your main account with an initial balance of 25 NEAR which will be transferred from the original to your new account.  
@@ -105,9 +120,7 @@ pass the correct approval ID which is 0.
 ```near
     near call $APPROVAL_NFT_CONTRACT_ID nft_transfer '{"receiver_id": "'$NFT_CONTRACT_ID'", "token_id": "approval-token", "approval_id": 0}' --accountId $NFT_CONTRACT_ID --depositYocto 1
 ```
-### Royalties
-For testing create a `royalty` sub-account as shown before in `Approve Account' section. 
-export an environment variable to `ROYALTY_NFT_CONTRACT_ID`  then build and deploy  the contract
+
 
 
 
