@@ -6,7 +6,7 @@
 [NEAR-CLI](https://docs.near.org/docs/tools/near-cli#setup)  
 
 ### Clone this Repo
-Use `git clone https://github.com/LoboVH/NFT-contract-NEAR-PROTOCOL.git` to get the file in this in your localmachine.  
+Use `git clone https://github.com/LoboVH/NFT-contract-NEAR-PROTOCOL.git` to get this file in your localmachine.  
 `cd NFT-contract-NEAR-PROTOCOL`
 
 
@@ -82,43 +82,33 @@ Note that `balance` is in yoctoNEAR.
 
 ### Approve account
 #### Create a sub account
-Run the following command to create a sub-account approval of your main account with an initial balance of 25 NEAR which will be transferred from the original to your new account.  
+
+Export an environment variable for the approval account(Any other account or [create a sub account](https://docs.near.org/docs/tutorials/contracts/nfts/approvals#creating-sub-account)) :
 ```near
-    near create-account approval.$NFT_CONTRACT_ID --masterAccount $NFT_CONTRACT_ID --initialBalance 25
+    export APPROVAL_NFT_CONTRACT_ID="APPROVAL_ACCOUNT_NAME"
 ```
-Export an environment variable for ease of development:
-```near
-    export APPROVAL_NFT_CONTRACT_ID=approval.$NFT_CONTRACT_ID
-```
-Using the build script, build the deploy the contract with new account.  
-```near
-    yarn build && near deploy --wasmFile out/main.wasm --accountId $APPROVAL_NFT_CONTRACT_ID
-```
-Initialize and Mint token:
-```near
-    near call $APPROVAL_NFT_CONTRACT_ID new_default_meta '{"owner_id": "'$APPROVAL_NFT_CONTRACT_ID'"}' --accountId $APPROVAL_NFT_CONTRACT_ID
-```  
- mint a token with a token ID "approval-token" and the receiver will be your new account.  
+ 
+ mint a token with a token ID "approval-token".  
  Update the metadata
 
 ```near
-    near call $APPROVAL_NFT_CONTRACT_ID nft_mint '{"token_id": "approval-token", "metadata": {"title": "Title", "description": "Description", "media": "Media Link"}, "receiver_id": "'$APPROVAL_NFT_CONTRACT_ID'"}' --accountId $APPROVAL_NFT_CONTRACT_ID --amount 0.1
+    near call $NFT_CONTRACT_ID nft_mint '{"token_id": "approval-token", "metadata": {"title": "Title", "description": "Description", "media": "Media Link"}, "receiver_id": "'$NFT_CONTRACT_ID'"}' --accountId $NFT_CONTRACT_ID --amount 0.1
 ```
 ### Approving an account  
 At this point, you should have two accounts. One stored under $NFT_CONTRACT_ID and the other under the $APPROVAL_NFT_CONTRACT_ID environment variable. You can use both of these accounts to test things out.  
-Execute the following command to approve the account stored under $NFT_CONTRACT_ID to have access to transfer your NFT with an ID "approval-token".  
+Execute the following command to approve the account stored under $APPROVAL_NFT_CONTRACT_ID to have access to transfer your NFT with an ID "approval-token".  
 ```near
-    near call $APPROVAL_NFT_CONTRACT_ID nft_approve '{"token_id": "approval-token", "account_id": "'$NFT_CONTRACT_ID'"}' --accountId $APPROVAL_NFT_CONTRACT_ID --deposit 0.1
+    near call $NFT_CONTRACT_ID nft_approve '{"token_id": "approval-token", "account_id": "'$APPROVAL_NFT_CONTRACT_ID'"}' --accountId $NFT_CONTRACT_ID --deposit 0.1
 ```
 Run this command to check the new approved account ID being returned.  
 ```near
-    near view $APPROVAL_NFT_CONTRACT_ID nft_tokens_for_owner '{"account_id": "'$APPROVAL_NFT_CONTRACT_ID'", "limit": 10}'
+    near view $NFT_CONTRACT_ID nft_tokens_for_owner '{"account_id": "'$NFT_CONTRACT_ID'", "limit": 10}'
 ```
 #### Transferring an NFT as an approved account  
 You should be able to use the other account to transfer the NFT to itself by which the approved account IDs should be reset:  
 pass the correct approval ID which is 0.  
 ```near
-    near call $APPROVAL_NFT_CONTRACT_ID nft_transfer '{"receiver_id": "'$NFT_CONTRACT_ID'", "token_id": "approval-token", "approval_id": 0}' --accountId $NFT_CONTRACT_ID --depositYocto 1
+    near call $NFT_CONTRACT_ID nft_transfer '{"receiver_id": "'$APPROVAL_NFT_CONTRACT_ID'", "token_id": "approval-token", "approval_id": 0}' --accountId $APPROVAL_NFT_CONTRACT_ID --depositYocto 1
 ```
 
 
