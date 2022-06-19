@@ -81,7 +81,6 @@ To calculate NFT Payout for given balance:
 Note that `balance` is in yoctoNEAR.
 
 ### Approve account
-#### Create a sub account
 
 Export an environment variable for the approval account(Any other account or [create a sub account](https://docs.near.org/docs/tutorials/contracts/nfts/approvals#creating-sub-account)) :
 ```near
